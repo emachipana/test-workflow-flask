@@ -1,0 +1,21 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  say-hi:
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+      packages: write
+    environment: production
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Login on GHCR
+        run: echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u emachipana --password-stdin
+      - name: Build Docker Image for Flask
+        run: docker build . -t ghcr.io/emachipana/flask-image:latest
+      - name: Push Flask Docker Image
+        run: docker push ghcr.io/emachipana/flask-image:latest
